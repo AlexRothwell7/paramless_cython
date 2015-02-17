@@ -9,9 +9,9 @@ Evolving functions are widespread in symbolic regression and [genetic programmin
 
 Some examples
 -------------
- * [Evolving fixed target functions](http://nbviewer.ipython.org/urls/raw.github.com/juliangarcia/paramless/master/notebooks/on_a_line_examples.ipynb)
- * [Evolution of metabolic investment](http://nbviewer.ipython.org/urls/raw.github.com/juliangarcia/paramless/master/notebooks/evolution%2520of%2520metabolic%2520investment.ipynb)
- * [Evolution of seasonal flowering](http://nbviewer.ipython.org/urls/raw.github.com/juliangarcia/paramless/master/notebooks/seasonal_flowering.ipynb)
- 
+ * [Evolving fixed target functions](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/on_a_line_examples.ipynb)
+ * [Evolution of metabolic investment](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/evolution%20of%20metabolic%20investment.ipynb)
+ * [Evolution of seasonal flowering](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/seasonal_flowering_fast.ipynb)
+ * [Improving runtime with Cython] (http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/cython_usage_example.ipynb)
 
 
