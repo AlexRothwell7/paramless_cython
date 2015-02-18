@@ -10,18 +10,19 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from collections import OrderedDict as OrderedDict
 from copy import deepcopy as deepcopy
-        
+
+
 def evolve(initial_surface, evolver, iterations, return_time_series=False, seed=None):
     """
     The main evolve function
-    
+
     Args:
         initial_surface: An array containing the initial surface for use in the evolution
         evolver: An Evolver object implementing a do_step(resident) method
         iterations: The number of iterations to be performed
         return_time_series: Whether this function will return a time series of residents
         seed: The seed to be used for the random number generator
-    
+
     Returns:
         The final resident and, if requested, the time series data formatted as an OrderedDict
     """
@@ -137,7 +138,7 @@ def create_video_from_time_series(series_compact, target_surface, domain, filena
 
 def main():
     pass
-        
+
 
 if __name__ == '__main__':
     main()
