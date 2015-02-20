@@ -9,9 +9,9 @@ Evolving functions are widespread in [symbolic regression](http://en.wikipedia.o
 
 Some examples
 -------------
- * [Evolving fixed target functions](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/on_a_line_examples.ipynb)
- * [Evolution of metabolic investment](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/evolution%20of%20metabolic%20investment.ipynb)
- * [Evolution of seasonal flowering](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/seasonal_flowering_fast.ipynb)
- * [Improving runtime with Cython] (http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/notebooks/cython_usage_example.ipynb)
+ * [Evolving fixed target functions](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/on_a_line_examples.ipynb)
+ * [Evolution of metabolic investment](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/evolution%20of%20metabolic%20investment.ipynb)
+ * [Evolution of seasonal flowering](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/seasonal_flowering.ipynb)
+ * [Improving runtime with Cython] (http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/cython_usage_example.ipynb)
 
 **Currently only works smoothly on Linux, some environment setup may be required for other platforms**
