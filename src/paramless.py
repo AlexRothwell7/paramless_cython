@@ -49,6 +49,43 @@ def evolve(initial_surface, evolver, iterations, return_time_series=False, seed=
         return resident
 
 
+def modelEvolve(population, definitions, evolver, iterations, seed, return_time_series):
+    np.random.seed(seed)
+    time_series = None
+    last_entry_time = 0
+    seq = 0
+    if return_time_series:
+        time_series = dict()
+    dominant = getDominant(population)
+    dominant_def = definitions[dominant]
+    for i in xrange(1, iterations):
+        [population, definitions] = evolver.do_step(population, definitions)
+        if return_time_series:
+            temp = getDominant(population)
+            if (dominant != temp):
+                time_series[seq] = {
+                    "alive": i - last_entry_time, "resident": dominant_def}
+                dominant = temp
+                dominant_def = definitions[dominant]
+                last_entry_time = i
+                seq += 1
+
+    if return_time_series:
+        return definitions[getDominant(population)], time_series
+    else:
+        return definitions[getDominant(population)]
+
+
+def getDominant(pop):
+    result = 0
+    max = 0
+    for key, value in pop.items():
+        if value > max:
+            max = value
+            result = key
+    return result
+
+
 def _number_of_generations_in_summary_dict(summary_ordered_dict):
     """
     Given an Ordered dict with entries {seq: [resident, alive]}
