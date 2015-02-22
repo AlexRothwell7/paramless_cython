@@ -487,7 +487,7 @@ cdef class MoranEvolver(Evolver):
         cdef double to_replicate = rand() / float(RAND_MAX) * fit_sum
         cdef int to_replace = int(rand() / float(RAND_MAX) * pop_sum)
         cdef int to_replicate_id = -1, to_replace_id = -1
-        
+
         cdef double t = 0
         for key, fit in fitness.items():
             t += fit
@@ -610,6 +610,7 @@ cpdef normalise(values):
     for key in values.iterkeys():
         values[key] -= minval
     return values
-        
+
+
 def setup(int seed):
     srand(seed)
