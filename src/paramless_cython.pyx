@@ -473,6 +473,7 @@ cdef class MoranEvolver(Evolver):
 
     cpdef do_step(self, population, definitions):
         fitness = self.fitness_function.get(definitions)
+        fitness = normalise(fitness)
         cdef double fit_sum = 0
         cdef int pop_sum = 0
         cdef int key
@@ -485,19 +486,19 @@ cdef class MoranEvolver(Evolver):
 
         cdef double to_replicate = rand() / float(RAND_MAX) * fit_sum
         cdef int to_replace = int(rand() / float(RAND_MAX) * pop_sum)
-        cdef int to_replicate_id, to_replace_id
-
+        cdef int to_replicate_id = -1, to_replace_id = -1
+        
         cdef double t = 0
         for key, fit in fitness.items():
             t += fit
-            if t > to_replicate:
+            if t >= to_replicate:
                 to_replicate_id = key
                 break
 
         cdef int t2 = 0
         for key, count in population.items():
             t2 += count
-            if t2 > to_replace:
+            if t2 >= to_replace:
                 to_replace_id = key
                 break
 
@@ -546,6 +547,7 @@ cdef class WrightFisherEvolver(Evolver):
 
     cpdef do_step(self, population, definitions):
         fitness = self.fitness_function.get(definitions)
+        fitness = normalise(fitness)
         cdef double fit_sum = 0
         cdef int pop_sum = 0
         cdef int key
@@ -602,6 +604,12 @@ cdef class WrightFisherEvolver(Evolver):
 
         return new_pop, new_def
 
-
+cpdef normalise(values):
+    cdef double minval = min(values.itervalues())
+    cdef int key
+    for key in values.iterkeys():
+        values[key] -= minval
+    return values
+        
 def setup(int seed):
     srand(seed)

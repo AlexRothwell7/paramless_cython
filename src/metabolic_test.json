@@ -1,0 +1,13 @@
+{
+  "seed": 777,
+  "domain_lower": 0.001,
+  "domain_upper": 1,
+  "domain_step": 0.01,
+  "mutation_epsilon": 0.01,
+  "width": 0.02,
+  "lower_bound": 0,
+  "evolver": "wright-fisher",
+  "output_file": "metabolic_test.csv",
+  "c": 0.5,
+  "iterations": 1000000
+}
