@@ -11,19 +11,19 @@ from libc.math cimport exp
 # The maximum number of iterations to be used in attempting to get a new mutant
 cdef int MAX_ITERATIONS = 1000000
 
-
 cdef class FitnessFunction(object):
     """ An abstract class to be subclassed for use by an Evolver """
 
-    def get(self, vector):
+    def get(self, vector, second=None):
         """ Abstract function to be implemented by a subclass.
-        Evaluates the fitness function of a vector according to this object
+        Evaluates the fitness function of a vector according to this object, optionally by comparing it to a second vector
 
         Args:
             vector: The resident to be evaluated
+            second: For use in a coevolutionary model, a second vector can be specified
 
         Returns:
-            The fitness of the vector
+            The fitness of the vector(s)
         """
         raise NotImplementedError
 
@@ -90,7 +90,6 @@ cdef class ModelEvolver(object):
                 an invasion occurred.
         """
         raise NotImplementedError
-
 
 cdef class DistanceFitnessFunction(FitnessFunction):
     """ A FitnessFunction implementation for use for fitting to a given target function """
@@ -454,7 +453,7 @@ cdef class StandardEvolver(Evolver):
         else:
             return resident_surface, (1 == 0)
 
-cdef class MoranEvolver(Evolver):
+cdef class MoranEvolver(ModelEvolver):
     """ An Evolver implementation for the Moran process """
     # The comparison and floating point tolerances and mutation chance to be
     # used
@@ -528,7 +527,7 @@ cdef class MoranEvolver(Evolver):
 
         return population, definitions
 
-cdef class WrightFisherEvolver(Evolver):
+cdef class WrightFisherEvolver(ModelEvolver):
     """ An Evolver implementation for the Moran process """
     # The comparison and floating point tolerances and mutation chance to be
     # used

@@ -9,5 +9,8 @@
   "evolver": "wright-fisher",
   "output_file": "metabolic_test.csv",
   "c": 0.5,
-  "iterations": 1000000
+  "iterations": 1000,
+  "population_size": 20,
+  "output_every": 100,
+  "output_entire_population": false
 }
