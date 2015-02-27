@@ -19,6 +19,7 @@ This will build the module and copy it to the appropriate directory for use.
 Usage
 ------
 There are two modes of use available within this project, the first involving a monomorphic population and the second having a heteromorphic population. The usages of both are briefly explained here. For more detail, see the example notebooks given (see below) as well as the documentation in the source code.
+
 **Monomorphic:**
 To set up an evolution run of a monomorphic population, 3 main details need to be specified, in the form of classes. These are the fitness function, the mutator and the evolution process.
 To specify the fitness function, a class with a get(vector) function returning the fitness of the vector must be implemented. As an example there is an existing one, _DistanceFitnessFunction_.
