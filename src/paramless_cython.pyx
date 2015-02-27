@@ -100,7 +100,7 @@ cdef class DistanceFitnessFunction(FitnessFunction):
         self.target = target
 
     @cython.cdivision(True)
-    cpdef get(self, double[:] vector):
+    cpdef get(self, double[:] vector, double[:] second=None):
         """ Evaluates the fitness function of a vector according to:
             fitness = 1/distance
 

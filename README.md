@@ -54,3 +54,4 @@ Some examples
  * [Evolution of metabolic investment](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/evolution%20of%20metabolic%20investment.ipynb)
  * [Evolution of seasonal flowering](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/seasonal_flowering.ipynb)
  * [Improving runtime with Cython](http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/cython_usage_example.ipynb)
+ * [Heteromorphic evolution of fixed target functions] (http://nbviewer.ipython.org/github/AlexRothwell7/paramless/blob/master/src/model_on_a_line_examples.ipynb)
