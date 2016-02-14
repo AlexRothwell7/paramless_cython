@@ -45,7 +45,7 @@ cdef class ModelFitnessFunction(object):
 cdef class Mutator(object):
     """ An abstract class to be subclassed for use by an Evolver """
 
-    def doMutation(self, vector):
+    def do_mutation(self, vector):
         """ Abstract function to be implemented by a subclass.
         Mutates the given vector according to this object
 
@@ -96,7 +96,7 @@ cdef class DistanceFitnessFunction(FitnessFunction):
     # The target function
     cdef double[:] target
 
-    def __init__(self, np.ndarray[double, ndim=1] target):
+    def __init__(self, double[:] target):
         self.target = target
 
     @cython.cdivision(True)
@@ -117,7 +117,7 @@ cdef class ModelDistanceFitnessFunction(ModelFitnessFunction):
     # The target function
     cdef double[:] target
 
-    def __init__(self, np.ndarray[double, ndim=1] target):
+    def __init__(self, double[:] target):
         self.target = target
 
     @cython.cdivision(True)
@@ -148,12 +148,12 @@ cdef one_norm_distance(double[:] u, double[:] v):
     Returns:
         The distance between the given vectors
     """
-    cdef double sum = 0
+    cdef double dist = 0
     cdef size = u.shape[0]
     cdef unsigned int i
     for i in range(size):
-        sum += fabs(u[i] - v[i])
-    return sum
+        dist += fabs(u[i] - v[i])
+    return dist
 
 
 cdef class PointMutator(Mutator):
@@ -169,7 +169,7 @@ cdef class PointMutator(Mutator):
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
-    cdef double[:] cyDoMutation(self, double[:] vector):
+    cdef double[:] cy_do_mutation(self, double[:] vector):
         """ The Cython code used to mutate the given vector.
 
         Args:
@@ -181,7 +181,7 @@ cdef class PointMutator(Mutator):
         cdef int is_inside = 0
         cdef int attempt = 0
         cdef double[:] mutant
-        while (is_inside != 1):
+        while is_inside != 1:
             mutant = self.attempt_point_mutation(vector)
             is_inside = cy_within_bounds(
                 mutant, self.lower_bound, self.upper_bound)
@@ -191,9 +191,9 @@ cdef class PointMutator(Mutator):
                     "Attempted too many mutations without producing anything within bounds")
         return mutant
 
-    def doMutation(self, np.ndarray[double, ndim=1] vector):
+    def do_mutation(self, double[:] vector):
         """ A wrapper function to allow Python code to access the optimised Cython code. """
-        return np.asarray(self.cyDoMutation(vector))
+        return np.asarray(self.cy_do_mutation(vector))
 
     cdef double[:] attempt_point_mutation(self, double[:] vector):
         """ The body of the mutation code. Mutation is completed through randomly choosing a point
@@ -207,7 +207,7 @@ cdef class PointMutator(Mutator):
         """
         cdef double[:] mutant = np.copy(vector)
         cdef int position = int(rand() / float(RAND_MAX) * vector.shape[0])
-        if (rand() % 2):
+        if rand() % 2:
             mutant[position] = mutant[position] + self.mutation_epsilon
         else:
             mutant[position] = mutant[position] - self.mutation_epsilon
@@ -224,7 +224,7 @@ cdef class PointDistributionMutator(Mutator):
     def __init__(self, double mutation_epsilon):
         self.mutation_epsilon = mutation_epsilon
 
-    cdef double[:] cyDoMutation(self, double[:] vector):
+    cdef double[:] cy_do_mutation(self, double[:] vector):
         """ The Cython code used to mutate the given vector.
 
         Args:
@@ -236,15 +236,15 @@ cdef class PointDistributionMutator(Mutator):
         cdef double[:] mutant = np.copy(vector)
         cdef int pos_up = int(rand() / float(RAND_MAX) * vector.shape[0]), pos_down = int(rand() / float(RAND_MAX) * vector.shape[0])
         cdef adjusted_epsilon = self.mutation_epsilon
-        if (mutant[pos_down] - adjusted_epsilon < 0):
+        if mutant[pos_down] - adjusted_epsilon < 0:
             adjusted_epsilon = mutant[pos_down]
         mutant[pos_up] += adjusted_epsilon
         mutant[pos_down] -= adjusted_epsilon
         return mutant
 
-    def doMutation(self, np.ndarray[double, ndim=1] vector):
+    def do_mutation(self, double[:] vector):
         """ A wrapper function to allow Python code to access the optimised Cython code. """
-        return np.asarray(self.cyDoMutation(vector))
+        return np.asarray(self.cy_do_mutation(vector))
 
 cdef class GaussianMutator(Mutator):
     """ A Mutator implementation for use in mutating the entire vector according to a Gaussian distribution """
@@ -254,14 +254,14 @@ cdef class GaussianMutator(Mutator):
     # The domain of the vectors to be used
     cdef double[:] domain
 
-    def __init__(self, double mutation_epsilon, np.ndarray[double, ndim=1] domain, double width, double lower_bound=INFINITY, double upper_bound=-INFINITY):
+    def __init__(self, double mutation_epsilon, double[:] domain, double width, double lower_bound=INFINITY, double upper_bound=-INFINITY):
         self.mutation_epsilon = mutation_epsilon
         self.domain = domain
         self.width = width
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
 
-    cdef double[:] cyDoMutation(self, double[:] vector):
+    cdef double[:] cy_do_mutation(self, double[:] vector):
         """ The Cython code used to mutate the given vector.
 
         Args:
@@ -273,7 +273,7 @@ cdef class GaussianMutator(Mutator):
         cdef int is_inside = 0
         cdef int attempt = 0
         cdef double[:] mutant
-        while (is_inside != 1):
+        while is_inside != 1:
             mutant = self.attempt_gaussian_mutation(vector)
             is_inside = cy_within_bounds(
                 mutant, self.lower_bound, self.upper_bound)
@@ -283,9 +283,9 @@ cdef class GaussianMutator(Mutator):
                     "Attempted too many mutations without producing anything within bounds")
         return mutant
 
-    def doMutation(self, np.ndarray[double, ndim=1] vector):
+    def do_mutation(self, double[:] vector):
         """ A wrapper function to allow Python code to access the optimised Cython code. """
-        return np.asarray(self.cyDoMutation(vector))
+        return np.asarray(self.cy_do_mutation(vector))
 
     cdef double[:] attempt_gaussian_mutation(self, double[:] vector):
         """ The body of the mutation code. Mutation is completed through randomly choosing a point
@@ -304,7 +304,7 @@ cdef class GaussianMutator(Mutator):
         cdef double[:] perturbation = self.helper(value)
         cdef int i, size = mutant.shape[0]
         # upwards
-        if (rand() % 2):
+        if rand() % 2:
             for i in range(size):
                 mutant[i] += perturbation[i]
         # downwards
@@ -341,12 +341,12 @@ cdef class GaussianDistributionMutator(Mutator):
     # The domain of the vectors to be used
     cdef double[:] domain
 
-    def __init__(self, double mutation_epsilon, np.ndarray[double, ndim=1] domain, double width):
+    def __init__(self, double mutation_epsilon, double[:] domain, double width):
         self.mutation_epsilon = mutation_epsilon
         self.domain = domain
         self.width = width
 
-    cdef double[:] cyDoMutation(self, double[:] vector):
+    cdef double[:] cy_do_mutation(self, double[:] vector):
         """ The Cython code used to mutate the given vector.
 
         Args:
@@ -373,9 +373,9 @@ cdef class GaussianDistributionMutator(Mutator):
             mutant[i] += perturbation_up[i] - perturbation_down[i]
         return mutant
 
-    def doMutation(self, np.ndarray[double, ndim=1] vector):
+    def do_mutation(self, double[:] vector):
         """ A wrapper function to allow Python code to access the optimised Cython code. """
-        return np.asarray(self.cyDoMutation(vector))
+        return np.asarray(self.cy_do_mutation(vector))
 
     cdef double[:] helper(self, double eps, double value, double width):
         """ The helper function tasked with creating an array representing a Gaussian distribution centred
@@ -395,9 +395,120 @@ cdef class GaussianDistributionMutator(Mutator):
             result[i] = eps * exp(-(self.domain[i] - value)**2 / width)
         return result
 
+cdef class nDimGaussianMutator:
+    """ A Mutator implementation for use in mutating the entire vector according to a Gaussian distribution """
+    # The epsilon to be used in mutations, the width of the distribution and
+    # absolute bounds for resulting vectors
+    cdef double mutation_epsilon, width, lower_bound, upper_bound
+    # The domain of the vectors to be used
+    cdef double[:,:] domain
+
+    def __init__(self, double mutation_epsilon, double[:,:] domain, double width,
+                 double lower_bound=INFINITY, double upper_bound=-INFINITY):
+        self.mutation_epsilon = mutation_epsilon
+        self.domain = domain
+        self.width = width
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
+
+    cdef double[:] cy_do_mutation(self, double[:] vector):
+        """ The Cython code used to mutate the given vector.
+
+        Args:
+            vector: the vector to be mutated
+
+        Returns:
+            A point mutated vector
+        """
+        cdef int is_inside = 0
+        cdef int attempt = 0
+        cdef double[:] mutant
+        while (is_inside != 1):
+            mutant = self.attempt_gaussian_mutation(vector)
+            is_inside = cy_within_bounds(
+                mutant, self.lower_bound, self.upper_bound)
+            attempt += 1
+            if attempt > MAX_ITERATIONS:
+                raise RuntimeError(
+                    "Attempted too many mutations without producing anything within bounds")
+        return mutant
+
+    def do_mutation(self, double[:] vector):
+        """ A wrapper function to allow Python code to access the optimised Cython code. """
+        return np.asarray(self.cy_do_mutation(vector))
+
+    cdef double[:] attempt_gaussian_mutation(self, double[:] vector):
+        """ The body of the mutation code. Mutation is completed through randomly choosing a point
+            in the vector and a width and increasing or decreasing its value and the surrounding values according
+            to a Gaussian distribution multiplied by the mutation epsilon.
+
+        Args:
+            vector: The vector to be mutated
+
+        Returns:
+            The mutated vector
+        """
+        cdef int index = int(rand() / float(RAND_MAX) * vector.shape[0])
+        cdef double[:] mutant = vector[:]
+        cdef double[:] perturbation = self.helper(index)
+        cdef int i, size = mutant.shape[0]
+        # upwards
+        if rand() % 2:
+            for i in range(size):
+                mutant[i] += perturbation[i]
+        # downwards
+        else:
+            for i in range(size):
+                mutant[i] -= perturbation[i]
+        return mutant
+
+    def helper(self, int value):
+        return np.asarray(self.cy_helper(value))
+
+    cdef double[:] cy_helper(self, int value):
+        """ The helper function tasked with creating an array representing a Gaussian distribution centred
+            on the given value.
+
+        Args:
+            value: The centre of the distribution.
+
+        Returns:
+            A memoryview representing a Gaussian distribution.
+        """
+        cdef int[:] sizes = np.array([len(x) for x in self.domain])
+        cdef double[:] result = np.zeros(np.prod(sizes))
+        cdef double adj_width = self.width * rand() / float(RAND_MAX)
+        cdef int i, size = result.size
+        cdef int[:] coords = get_coords_from_num(value, sizes)
+        cdef double[:] centre = np.zeros(len(coords)), vals = np.zeros(len(coords))
+        for i in range(len(coords)):
+            centre[i] = self.domain[i, coords[i]]
+        for i in range(size):
+            coords = get_coords_from_num(i, sizes)
+            for j in range(len(coords)):
+                vals[j] = self.domain[j, coords[j]]
+            result[i] = self.mutation_epsilon * exp(-np.linalg.norm([vals[j] - centre[j] for j in range(len(vals))])**2 / adj_width)
+        return result
+
+
+cdef int[:] get_coords_from_num(int num, int[:] dim_lengths):
+    cdef int[:] result = np.zeros(len(dim_lengths), dtype=int)
+    for i in range(len(result)):
+        result[i] = num % dim_lengths[i]
+        num //= dim_lengths[i]
+    return result
+
+cdef int get_num_from_coords(int[:] coords, int[:] dim_lengths):
+    cdef int num = coords[len(coords)-1]
+    for i in range(len(coords) - 2, -1, -1):
+        num *= dim_lengths[i]
+        num += coords[i]
+    return num
+
+
 cdef int cy_within_bounds(double[:] vector, double lower, double upper):
     """ Checks if a vector is within the given bounds.
-        Cython funciton.
+        Cython function.
 
     Args:
         vector: The vector to be checked
@@ -434,7 +545,7 @@ cdef class StandardEvolver(Evolver):
         self.mutator = mutator
         self.atol = atol
 
-    cpdef do_step(self, np.ndarray[double, ndim=1] resident_surface):
+    cpdef do_step(self, double[:] resident_surface):
         """ Performs the main body of the evolution.
             This implementation simply creates a mutant, compares its fitness against the resident and returns
             the most fit and whether this was the mutant
@@ -446,12 +557,12 @@ cdef class StandardEvolver(Evolver):
             The resident at the end of the step which may be the original one and whether
                 an invasion occurred.
         """
-        cdef double[:] mutant = self.mutator.doMutation(resident_surface)
+        cdef double[:] mutant = self.mutator.do_mutation(resident_surface)
         cdef double fitness_resident = self.fitness_function.get(resident_surface), fitness_mutant = self.fitness_function.get(mutant)
         if fitness_resident < fitness_mutant and abs(fitness_resident - fitness_mutant) > self.atol:
             return np.asarray(mutant), (1 == 1)
         else:
-            return resident_surface, (1 == 0)
+            return np.asarray(resident_surface), (1 == 0)
 
 cdef class MoranEvolver(ModelEvolver):
     """ An Evolver implementation for the Moran process """
@@ -503,21 +614,21 @@ cdef class MoranEvolver(ModelEvolver):
 
         population[to_replace_id] -= 1
 
-        cdef int max = 0
+        cdef int best = 0
         cdef double[:] mutant
         cdef double[:] definition
         if rand() / float(RAND_MAX) < self.mut_chance:
-            mutant = self.mutator.doMutation(
+            mutant = self.mutator.do_mutation(
                 np.asarray(definitions[to_replicate_id]))
             for key, definition in definitions.items():
-                if key > max:
-                    max = key
+                if key > best:
+                    best = key
                 if one_norm_distance(mutant, definition) < self.ctol:
                     population[key] += 1
                     break
             else:
-                population[max + 1] = 1
-                definitions[max + 1] = np.asarray(mutant)
+                population[best + 1] = 1
+                definitions[best + 1] = np.asarray(mutant)
         else:
             population[to_replicate_id] += 1
 
@@ -581,7 +692,7 @@ cdef class WrightFisherEvolver(ModelEvolver):
         cdef double[:] definition
         for i in range(pop_sum):
             if rand() / float(RAND_MAX) < self.mut_chance:
-                mutant = self.mutator.doMutation(
+                mutant = self.mutator.do_mutation(
                     np.asarray(definitions[replacements[i]]))
                 for key, definition in new_def.items():
                     if key > max:
